@@ -1,10 +1,9 @@
-import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
-import path from "path";
+import { CONFIG } from "./config/config";
 import cors from "cors";
 import bodyParser from "body-parser";
 
-dotenv.config({path: '../../.env'});
+
 
 const app: Express = express();
 
@@ -17,12 +16,19 @@ app.get("/",(req: Request, res: Response) => {
   res.sendFile(__dirname+'../client/index.html')
 })
 
-app.get("/api", (req: Request, res: Response) =>{
-  res.send({"msg" : "success"})
+import {getData} from './database/getCategories'
+
+app.get("/api", async (req: Request, res: Response) =>{
+  let resp = await getData(1)
+  console.log(resp)
+  res.send(resp)
+  
 })
 
 app.get("/api/nested", (req: Request, res: Response) =>{
   res.send({"msg" : "nested success"})
 })
-const PORT = process.env.PORT || 3000
+
+console.log(CONFIG.SERVER.PORT)
+const PORT = CONFIG.SERVER.PORT || 3000
 app.listen(PORT, () => console.log(`Server listening on port: ${PORT}`))

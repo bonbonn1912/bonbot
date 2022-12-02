@@ -4,7 +4,7 @@ import path from "path";
 import cors from "cors";
 import bodyParser from "body-parser";
 
-dotenv.config();
+dotenv.config({path: '../../.env'});
 
 const app: Express = express();
 
@@ -20,5 +20,5 @@ app.get("/",(req: Request, res: Response) => {
 app.get("/api", (req: Request, res: Response) =>{
   res.send({"msg" : "success"})
 })
-
-app.listen(8000, () => console.log("SERVER LISTTENDING"))
+const PORT = process.env.PORT
+app.listen(PORT, () => console.log(`Server listening on port: ${PORT}`))

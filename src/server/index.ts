@@ -20,5 +20,9 @@ app.get("/",(req: Request, res: Response) => {
 app.get("/api", (req: Request, res: Response) =>{
   res.send({"msg" : "success"})
 })
-const PORT = process.env.PORT
+
+app.get("/api/nested", (req: Request, res: Response) =>{
+  res.send({"msg" : "nested success"})
+})
+const PORT = process.env.PORT || 3000
 app.listen(PORT, () => console.log(`Server listening on port: ${PORT}`))

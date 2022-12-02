@@ -1,17 +1,19 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
 
 function App() {
-  const [count, setCount] = useState(0)
-  const testApi = () =>{
-    fetch("http://localhost:8000/api").then(response => response.json())
-                  .then(data => console.log(data))
-  }
+  const [count, setCount] = useState(0);
+  const testApi = (path: string) => {
+    fetch(path)
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  };
   return (
-        <button onClick={testApi}>
-          Test Api
-        </button>
-  )
+    <div>
+      <button onClick={() =>testApi("/api")}>Test Api</button>
+      <button onClick={() =>testApi("/api/nested")}>Test Nested</button>
+    </div>
+  );
 }
 
-export default App
+export default App;

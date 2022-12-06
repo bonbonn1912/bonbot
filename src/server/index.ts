@@ -9,17 +9,15 @@ import session from "express-session";
 const LocalStrategy = passport.Strategy;
 const twitchStrategy = passportTwitch.Strategy;
 const app: Express = express();
-
-import mongoose from 'mongoose'
-const { Schema } = mongoose
-const User = new Schema({
-  email: {
-    type: String,
-    required: true
-  }
-})
-
-const UserModel = mongoose.model('user', User)
+import MongoStore from "connect-mongo";
+import mongoose from "mongoose";
+const { Schema } = mongoose;
+const user_session = new Schema({
+  login: String,
+  account: Object,
+});
+mongoose.connect("mongodb://127.0.0.1:27017/users", ()=>{console.log("connected")})
+const UserModel = mongoose.model("user_accounts", user_session);
 
 passport.use(
   new twitchStrategy(
@@ -29,24 +27,36 @@ passport.use(
       callbackURL: "http://localhost:3000/auth/twitch/callback",
       scope: "user_read",
     },
-    function (accessToken, refreshToken, profile, done) {
-      return done(null, profile);
+    async function (accessToken, refreshToken, profile: any, done) {
+      UserModel.findOne({login: profile.login}).then(account =>{
+        if(account){
+          console.log("user already exists")
+          done(null, profile)
+        }else{
+          console.log("user gets created")
+          UserModel.create({login: profile.login, account: profile})
+          done(null, profile)
+        }
+      })
     }
   )
 );
 
+//const sessionStore = new MongoStore({ client: connection.getClient(), collection: 'user-sessions' })
+//const connection = mongoose.connect("mongodb://localhost:27017/user_sessions");
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(__dirname + "./../client/"));
+
 app.use(
   session({
     secret: "keyboard cat",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { 
-      secure: true, 
-    },
+    saveUninitialized: true, // don't create session until something stored //don't save session if unmodified
+    store: MongoStore.create({
+      mongoUrl: "mongodb://127.0.0.1:27017/sessions",
+      collectionName: "user_sessions",
+    }),
+    cookie: { maxAge: 180 * 60 * 1000 },
   })
 );
 
@@ -60,15 +70,20 @@ const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(express.static(__dirname + "./../client/"));
+console.log(__dirname + "./../client/")
 app.get("/", (req: Request, res: Response) => {
-  console.log("HALLO");
-  console.log(CONFIG.DATABASE.CON_STRING);
-  res.sendFile(__dirname + "../client/index.html");
-});
+ // console.log("HALLO");
+ // console.log(CONFIG.DATABASE.CON_STRING);
+ console.log("HIT")
+ console.log(path.resolve(__dirname, "../dist/client", "index.html"))
+ res.sendFile(path.resolve(__dirname, "../client", "index.html"))
+// res.send("HIer bin ich")
+//  res.sendFile(__dirname + "../client/index.html");
+}); 
 
 import { getData } from "./database/getCategories";
-import { ResultSetHeader } from "mysql2";
+import path from "path";
 console.log(CONFIG.TWITCH.CLIENT_ID);
 console.log(CONFIG.TWITCH.CLIENT_SECRET);
 app.get("/auth/twitch", passport.authenticate("twitch"));
@@ -80,43 +95,34 @@ app.get(
   }
 );
 
-app.get("/success", isLoggedIn, (req: any, res: Response) => {
-  res.send(`!Hello ${JSON.stringify(req.user)}`);
-});
-
-/*app.get("/Dashboard", isLoggedIn, (req: any, res:Response) =>{
-  res.send(`!Dashboard von ${JSON.stringify(req.user)}`)
-}) */
-
-app.get("/api", async (req: Request, res: Response) => {
-  let resp = await getData(1);
-  console.log(resp);
-  res.send(resp);
-});
-
 app.get("/isauth", (req: Request, res: Response) => {
-  console.log(req.session);
-  res.send({ msg: true });
+  if(req.isAuthenticated()){
+   // res.statusCode == 200
+    res.send({ msg: req.user });
+  }else{
+    res.statusCode = 401
+    res.send({msg: "not authenticated"})
+  }
+ 
 });
 
 app.get("/api/nested", (req: Request, res: Response) => {
   res.send({ msg: "nested success" });
-});
+}); 
 
 passport.serializeUser(function (user, done) {
- 
   done(null, user);
 });
 
 passport.deserializeUser((userID: any, done) => {
-  UserModel.findById(userID, (err: any, user: any) =>{
-    done(null, user);
-  })
-  
+    done(null, userID);
 });
-console.log(CONFIG.SERVER.PORT);
 const PORT = CONFIG.SERVER.PORT || 3000;
-app.get("/*", (req: any, res: Response) => {
-  res.redirect("/");
-});
+app.get("/*", (req: Request, res: Response) => {
+  // console.log("HALLO");
+  // console.log(CONFIG.DATABASE.CON_STRING);
+  res.sendFile(path.resolve(__dirname, "../client", "index.html"))
+ // res.send("HIer bin ich")
+ //  res.sendFile(__dirname + "../client/index.html");
+ }); 
 app.listen(PORT, () => console.log(`Server listening on port: ${PORT}`));

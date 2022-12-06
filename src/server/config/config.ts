@@ -12,5 +12,8 @@ export const CONFIG = {
  TWITCH:{
     CLIENT_ID: process.env.TWITCH_CLIENT_ID as string,
     CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET as string
+ }, 
+ MONGO_DB:{
+   CON_STRING: 'mongodb://127.0.01:27017' as string
  }
 }

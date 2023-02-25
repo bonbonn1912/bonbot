@@ -42,8 +42,9 @@ passport.use(
   )
 );
 
-//const sessionStore = new MongoStore({ client: connection.getClient(), collection: 'user-sessions' })
+
 //const connection = mongoose.connect("mongodb://localhost:27017/user_sessions");
+// const sessionStore = new MongoStore({ client: connection.getClient(), collection: 'user-sessions' })
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -73,13 +74,10 @@ app.use(passport.session());
 app.use(express.static(__dirname + "./../client/"));
 console.log(__dirname + "./../client/")
 app.get("/", (req: Request, res: Response) => {
- // console.log("HALLO");
- // console.log(CONFIG.DATABASE.CON_STRING);
  console.log("HIT")
  console.log(path.resolve(__dirname, "../dist/client", "index.html"))
  res.sendFile(path.resolve(__dirname, "../client", "index.html"))
-// res.send("HIer bin ich")
-//  res.sendFile(__dirname + "../client/index.html");
+
 }); 
 
 import { getData } from "./database/getCategories";
@@ -89,21 +87,25 @@ console.log(CONFIG.TWITCH.CLIENT_SECRET);
 app.get("/auth/twitch", passport.authenticate("twitch"));
 app.get(
   "/auth/twitch/callback",
-  passport.authenticate("twitch", { failureRedirect: "/failure" }),
+  passport.authenticate("twitch", { failureRedirect: "/" }),
   function (req, res) {
-    res.redirect("/");
+    res.redirect("/dashboard");
   }
 );
 
-app.get("/isauth", (req: Request, res: Response) => {
+app.get("/authenticate", (req: Request, res: Response) => {
   if(req.isAuthenticated()){
-   // res.statusCode == 200
-    res.send({ msg: req.user });
+    res.status(200).send(req.user);
   }else{
-    res.statusCode = 401
-    res.send({msg: "not authenticated"})
+    res.status(200).send(null);
   }
- 
+});
+
+app.get('/logout', function(req, res, next){
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
 });
 
 app.get("/api/nested", (req: Request, res: Response) => {

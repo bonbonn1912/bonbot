@@ -8,5 +8,5 @@ export const sessionConfig = session({
       mongoUrl: "mongodb://127.0.0.1:27017/sessions",
       collectionName: "user_sessions",
     }),
-    cookie: { maxAge: 1000 * 60 },
+    cookie: { maxAge: 1000 * 60 * 500 },
   })

@@ -1,19 +1,18 @@
 import { AuthContext } from "../../context/AuthProvider";
 import { useContext } from "react";
 import  Button  from '../Buttons/Button'
+import { Sidebar } from "../Sidebar/Sidebar";
+import { Navbar } from "../Navbar/Navbar";
+import { Command } from "./Command/Command";
 
 
 export const Dashboard = () => {
-  const { auth } = useContext(AuthContext);
-  const logoutUrl = `http://${window.location.host}/logout`;
     return (
-      <>
-        <h1 className="text-5xl font-bold underline bg-slate-400">
-        Welcome to your Dashboard {auth.login}
-      </h1>
-      <Button href={logoutUrl} titel="Logout"></Button>
-      </>
-      
-
+      <div className="flex h-screen">
+      <Sidebar/>
+      <div className="w-screen">
+      <Command/>
+      </div>
+      </div>  
     )
 }

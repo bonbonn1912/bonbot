@@ -1,0 +1,2 @@
+export const LoginButtonStyle = 'bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline';
+export const LogoutButtonStyle ='bg-slate-400 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline';

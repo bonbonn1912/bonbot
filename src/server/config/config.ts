@@ -19,6 +19,6 @@ export const CONFIG = {
     CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET as string
  }, 
  MONGO_DB:{
-   CON_STRING: 'mongodb://127.0.01:27017' as string
+   CON_STRING: process.env.MONGODB_URL as string
  }
 }

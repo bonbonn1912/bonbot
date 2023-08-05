@@ -7,7 +7,6 @@ import { Command } from "./Command/Command";
 
 
 export const Dashboard = () => {
-  console.log("load dashboard");
     return (
       <div className="flex h-screen">
       <Sidebar/>

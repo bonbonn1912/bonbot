@@ -12,6 +12,12 @@ RUN npm install
 
 WORKDIR /
 
+WORKDIR /src/server
+
+RUN npx prisma generate
+
+WORKDIR /
+
 WORKDIR /src
 
 EXPOSE 8000

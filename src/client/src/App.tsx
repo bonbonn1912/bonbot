@@ -4,6 +4,8 @@ import { Dashboard } from './Components/Pages/Dashboard'
 import ProtectedRoute from './Components/Pages/ProtectedRoute'
 import { useEffect, useState, useContext } from 'react'
 import { AuthContext } from './context/AuthProvider'
+import { authenticateUser } from './Functions/authUser'
+import LoadingCircle from './Components/Buttons/LoadingCircle'
 function App() {
 
   const { auth, setAuth } = useContext(AuthContext)
@@ -11,12 +13,6 @@ function App() {
 
 
   useEffect(() =>{
-    const authenticateUser = async () =>{
-      const auth = await fetch("/authenticate");
-      console.log("auth done")
-      const user = await auth.json();
-      return user
-    }
     authenticateUser().then((user) =>{
       setAuth(user);
       setLoading(false);
@@ -29,7 +25,7 @@ function App() {
 
   const redirectTo =  () => {
     if(loading){
-      return null;
+      return <LoadingCircle/>
     }else if(auth){
       return <Navigate to="/dashboard" replace={true} />
     }else{

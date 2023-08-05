@@ -7,27 +7,35 @@ import { AuthContext } from './context/AuthProvider'
 function App() {
 
   const { auth, setAuth } = useContext(AuthContext)
+  const [loading, setLoading] = useState(true);
 
 
   useEffect(() =>{
     const authenticateUser = async () =>{
       const auth = await fetch("/authenticate");
+      console.log("auth done")
       const user = await auth.json();
       return user
     }
     authenticateUser().then((user) =>{
       setAuth(user);
+      setLoading(false);
     }).catch((err) =>{
       setAuth(null)
+      setLoading(false);
     })
   },[])
 //   
 
-  const redirectTo = () => {
-    if(auth){
+  const redirectTo =  () => {
+    if(loading){
+      return null;
+    }else if(auth){
       return <Navigate to="/dashboard" replace={true} />
+    }else{
+      return <Navigate to="/home" replace={true}/>
     }
-    return <Navigate to="/home" replace={true}/>
+   
   }
   return (
     <Router>

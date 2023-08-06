@@ -42,7 +42,7 @@ export async function connectOnToTwitchOnStartup(){
         })
       
     }).catch(err =>{
-        console.log("error fetching active user")
+        console.log(err)
     })
 }
 /*export async function insertCommand(trigger: string, value: string, intervall: number, isRepetitive: boolean, streamerId: number){

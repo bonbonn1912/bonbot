@@ -17,8 +17,6 @@ WORKDIR /src/server
 
 RUN npx prisma generate
 
-RUN npx prisma db push
-
 WORKDIR /
 
 WORKDIR /src

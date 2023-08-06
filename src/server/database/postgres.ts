@@ -3,15 +3,16 @@ import { error } from 'console';
 import { connectToTwitchChat } from '../twitch/chat/handler';
 import { CONFIG } from '../config/config';
 
-const prisma = new PrismaClient({
-    datasources:{
-        db:{
-            url: CONFIG.DATABASE.POSTGRES_URL
-        }
-    }
-})
+
 
 export async function insertUser(username: string, isActive: boolean, description: string, isAdmin: boolean, isBotConnected: boolean){
+    const prisma = new PrismaClient({
+        datasources:{
+            db:{
+                url: CONFIG.DATABASE.POSTGRES_URL
+            }
+        }
+    })
     const user = await prisma.user.create({
         data: {
             username: username,
@@ -28,6 +29,13 @@ export async function insertUser(username: string, isActive: boolean, descriptio
 }
 
 export async function connectOnToTwitchOnStartup(){
+    const prisma = new PrismaClient({
+        datasources:{
+            db:{
+                url: CONFIG.DATABASE.POSTGRES_URL
+            }
+        }
+    })
     prisma.user.findMany({
         where:{
             isBotConnected: true,

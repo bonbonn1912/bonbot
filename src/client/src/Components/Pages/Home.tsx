@@ -34,11 +34,12 @@ export const Home = () => {
          
         </h1>
       </div>
-
+     <a href={twitchAuthUrl}>
       <div style={LoginButtonStyle}>
         <RiTwitchFill className="text-white mr-4 text-3xl" />
         Login with Twitch
       </div>
+      </a>
     </div>
   );
 };

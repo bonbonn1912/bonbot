@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { error } from 'console';
+import { connectToTwitchChat } from '../twitch/chat/handler';
 const prisma = new PrismaClient()
 
 export async function insertUser(username: string, isActive: boolean, description: string, isAdmin: boolean, isBotConnected: boolean){
@@ -18,6 +19,24 @@ export async function insertUser(username: string, isActive: boolean, descriptio
     return user;
 }
 
+export async function connectOnToTwitchOnStartup(){
+    prisma.user.findMany({
+        where:{
+            isBotConnected: true,
+        },
+        select: {
+            username: true,
+        },
+    }).then((data) =>{
+        const results = data;
+        results.map(el => {
+            connectToTwitchChat(el.username as string, false)
+        })
+      
+    }).catch(err =>{
+        console.log("error fetching active user")
+    })
+}
 /*export async function insertCommand(trigger: string, value: string, intervall: number, isRepetitive: boolean, streamerId: number){
    const command = await prisma.commands.create({
     data:{

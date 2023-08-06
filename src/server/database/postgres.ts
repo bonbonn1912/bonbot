@@ -4,12 +4,11 @@ import { connectToTwitchChat } from '../twitch/chat/handler';
 import { CONFIG } from '../config/config';
 
 
-console.log(CONFIG.DATABASE.POSTGRES_URL)
 export async function insertUser(username: string, isActive: boolean, description: string, isAdmin: boolean, isBotConnected: boolean){
     const prisma = new PrismaClient({
         datasources:{
             db:{
-                url: CONFIG.DATABASE.POSTGRES_URL
+                url: '"'+CONFIG.DATABASE.POSTGRES_URL+"'"
             }
         }
     })

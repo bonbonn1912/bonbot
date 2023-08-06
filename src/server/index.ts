@@ -10,7 +10,7 @@ async function init(){
 
    
 }
-server.listen(3000, () =>{console.log("Server listening on Port 3000")})
+server.listen(process.env.PORT, () =>{console.log("Server listening on Port 3000")})
 
 
 

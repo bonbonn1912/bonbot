@@ -1,7 +1,14 @@
 import { PrismaClient } from '@prisma/client'
 import { error } from 'console';
 import { connectToTwitchChat } from '../twitch/chat/handler';
-const prisma = new PrismaClient()
+import { CONFIG } from '../config/config';
+const prisma = new PrismaClient({
+    datasources:{
+        db:{
+            url: CONFIG.DATABASE.POSTGRES_URL
+        }
+    }
+})
 
 export async function insertUser(username: string, isActive: boolean, description: string, isAdmin: boolean, isBotConnected: boolean){
     const user = await prisma.user.create({

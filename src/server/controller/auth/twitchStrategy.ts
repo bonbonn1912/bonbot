@@ -11,7 +11,7 @@ export const strategy = new twitchStrategy(
     {
       clientID: CONFIG.TWITCH.CLIENT_ID,
       clientSecret: CONFIG.TWITCH.CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/twitch/callback",
+      callbackURL: CONFIG.TWITCH.REDIRECT_URL,
       scope: "user_read channel:manage:broadcast",
     },
     async function (accessToken, refreshToken, profile: any, done) {

@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
 
 dotenv.config({path: './../../.env'});
+
+const isCloudEnv = process.env.CLOUD_ENV == "true" ? true : false;
+
 export const CONFIG = {
  SERVER : {
     PORT: process.env.PORT
@@ -10,7 +13,7 @@ export const CONFIG = {
     POSTGRES_URL: process.env.DATABASE_POSTGRES_URL as string,
  },
  TWITCH:{
-   REDIRECT_URL: process.env.CALLBACK_URL as string + `:${process.env.PORT}/auth/twitch/callback`,
+   REDIRECT_URL: process.env.CALLBACK_URL as string + `${isCloudEnv ? "" : ":"+process.env.PORT}/auth/twitch/callback`,
    CHAT:{
       CLIENT_ID: process.env.TWITCH_CHAT_CLIENT_ID as string,
       ACCESS_TOKEN: process.env.TWITCH_CHAT_ACCESS_TOKEN as string,

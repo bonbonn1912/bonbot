@@ -8,4 +8,5 @@ export interface authUser {
     username: string,
     description: string,
     isBotConnected?: boolean,
+    profileImageUrl?: string,
 }

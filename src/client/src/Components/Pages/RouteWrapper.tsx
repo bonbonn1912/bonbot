@@ -1,15 +1,19 @@
 import { Component, useContext, useEffect, useState } from "react";
-import { Route, Navigate } from "react-router-dom";
+import { Route, Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthProvider";
 import { authenticateUser } from "../../Functions/authUser";
 import LoadingCircle from "../Buttons/LoadingCircle";
+import { Home } from "./Home";
 
 
-interface props {
-  children: React.ReactElement
+interface Props {
+  isAuthenticatedElement: React.ReactElement
+  alternativeElement: React.ReactElement
+
 }
 
-const ProtectedRoute = (props: props) => {
+const RouteWrapper = ({ isAuthenticatedElement, alternativeElement}  : Props) => {
+  console.log("WrouteWrapper getting called")
   const { auth, setAuth } = useContext(AuthContext)
   const [loading, setLoading] = useState(true);
   useEffect(() =>{
@@ -24,12 +28,11 @@ const ProtectedRoute = (props: props) => {
   },[])
     if(loading){
       return <LoadingCircle/>
+    }else{
+      return auth ? isAuthenticatedElement : alternativeElement;
     }
-    if (auth == null) {
-      return <Navigate to="/home" replace />;
-    }
-    return props.children;
+   
   };
 
-export default ProtectedRoute;
+export default RouteWrapper;
   

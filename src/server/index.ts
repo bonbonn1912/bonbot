@@ -6,10 +6,7 @@ import * as tmi from "tmi.js"
 import { connectOnToTwitchOnStartup } from "./database/postgres";
 
 console.log("Starting bonbot")
-async function init(){
-
-   
-}
+console.log("redirect url:" + CONFIG.TWITCH.REDIRECT_URL)
 server.listen(process.env.PORT, () =>{console.log("Server listening on Port 3000")})
 
 

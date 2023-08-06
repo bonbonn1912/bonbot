@@ -8,25 +8,27 @@ datasource db {
 }
 
 model User {
-  userid       Int       @id @default(autoincrement())
+  userId       Int       @id @default(autoincrement())
   username     String?   @unique @db.VarChar(255)
-  registeredat DateTime? @default(now()) @db.Timestamp(6)
-  updatedat    DateTime? @default(now()) @db.Timestamp(6)
-  isactive     Boolean?
+  registeredAt DateTime? @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime? @default(now()) @db.Timestamp(6)
+  isActive     Boolean
+  isAdmin      Boolean
+  isBotConnected Boolean
   description  String?   @db.VarChar(500)
   commands Commands[]
 }
 
 	model Commands {
-  commandid   Int       @id @default(autoincrement())
+  commandId   Int       @id @default(autoincrement())
   trigger     String    @db.VarChar(35)
   value       String    @db.VarChar(500)
   registeredAt DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   isActive    Boolean
   count       Int
-  streamerid  Int       // Fremdschlüssel auf die User-Tabelle
-  user        User      @relation(fields: [streamerid], references: [userid])
+  streamerId  Int       // Fremdschlüssel auf die User-Tabelle
+  user        User      @relation(fields: [streamerId], references: [userId])
   intervall Int
   isRepetitive Boolean
 }

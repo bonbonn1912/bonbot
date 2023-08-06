@@ -5,6 +5,7 @@ import passport from "passport";
 
 import { sessionConfig } from "./auth/session";
 import { authenticationRouter } from "./auth/authenticationController";
+import { postUserRouter } from "./post/userController";
 import { defaultRouter } from './DefaultController'
 
 export const server = express()
@@ -20,6 +21,7 @@ server.use(passport.initialize());
 server.use(passport.session());
 
 server.use(authenticationRouter)
+server.use(postUserRouter)
 server.use(defaultRouter)
 
 

@@ -1,13 +1,16 @@
 import { PrismaClient } from '@prisma/client'
 import { error } from 'console';
+import { connectToTwitchChat } from '../twitch/chat/handler';
 const prisma = new PrismaClient()
 
-export async function insertUser(username: string, isActive: boolean, description: string){
+export async function insertUser(username: string, isActive: boolean, description: string, isAdmin: boolean, isBotConnected: boolean){
     const user = await prisma.user.create({
         data: {
             username: username,
-            isactive: true, 
-            description: description
+            isActive: isActive,
+            isAdmin: isAdmin, 
+            description: description,
+            isBotConnected: isBotConnected,
         }
     }).catch(err => {
         console.log("Could not create user. Reason: " + err)
@@ -16,7 +19,25 @@ export async function insertUser(username: string, isActive: boolean, descriptio
     return user;
 }
 
-export async function insertCommand(trigger: string, value: string, intervall: number, isRepetitive: boolean, streamerId: number){
+export async function connectOnToTwitchOnStartup(){
+    prisma.user.findMany({
+        where:{
+            isBotConnected: true,
+        },
+        select: {
+            username: true,
+        },
+    }).then((data) =>{
+        const results = data;
+        results.map(el => {
+            connectToTwitchChat(el.username as string, false)
+        })
+      
+    }).catch(err =>{
+        console.log("error fetching active user")
+    })
+}
+/*export async function insertCommand(trigger: string, value: string, intervall: number, isRepetitive: boolean, streamerId: number){
    const command = await prisma.commands.create({
     data:{
        trigger: trigger,
@@ -33,4 +54,4 @@ export async function insertCommand(trigger: string, value: string, intervall: n
    })
    return command;
 
-}
+} */

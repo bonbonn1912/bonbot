@@ -3,6 +3,10 @@ import { CONFIG } from "../../config/config";
 import { UserModel } from "../../database/mongo";
 
 const twitchStrategy = passportTwitch.Strategy;
+
+const isAdmin: Boolean = true;
+const isSetup: Boolean = false;
+
 export const strategy = new twitchStrategy(
     {
       clientID: CONFIG.TWITCH.CLIENT_ID,

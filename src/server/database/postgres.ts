@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { error } from 'console';
 import { connectToTwitchChat } from '../twitch/chat/handler';
 import { CONFIG } from '../config/config';
+
 const prisma = new PrismaClient({
     datasources:{
         db:{

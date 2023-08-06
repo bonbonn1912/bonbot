@@ -16,7 +16,12 @@ function App() {
             />
           }
         />
-        <Route path="/*" element={<Home/>}/>
+        <Route path="/" element={
+            <RouteWrapper
+              isAuthenticatedElement={<Navigate to="/dashboard" replace />}
+              alternativeElement={<Home/>}
+            />
+          }/>
       </Routes>
     </Router>
   )

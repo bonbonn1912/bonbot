@@ -8,6 +8,6 @@ export function handleIncomingMessages(channel: string){
     
     client.on('message', (channel, tags, message, self) => {
         // "Alca: Hello, World!"
-        console.log(`${tags['display-name']}: ${message}`);
+        console.log(`${tags['display-name']}: ${message}!`);
     }); 
 }

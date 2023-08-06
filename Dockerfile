@@ -12,7 +12,6 @@ RUN npm install
 
 WORKDIR /
 
-
 WORKDIR /src/server
 
 RUN npx prisma generate

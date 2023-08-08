@@ -1,16 +1,25 @@
 import { RiMenuFill } from 'react-icons/ri';
 import Button from '../Buttons/Button';
 import { LogoutButtonStyle } from '../Styles';
+import { useState } from 'react';
+import DropDownSelect from '../Navbar/DropDownSelect';
 
 interface NavbarProps {
     onClickHandler: any,
     username: string,
     profileImageUrl: string,
+    isBotConnected: boolean,
 }
 
 
 
-const Navbar = ({onClickHandler, username, profileImageUrl}: NavbarProps) =>{
+const Navbar = ({onClickHandler, username, profileImageUrl, isBotConnected}: NavbarProps) =>{
+
+  const [showSettings, setShowSettings] = useState(false);
+
+  const toggleSettings = () => {
+      setShowSettings(!showSettings);
+  };
     const logoutUrl = `http://${window.location.host}/logout`;
     return( <div className="flex justify-end bg-gray-900 p-5 overflow-hidden max-h-16">
     {/* Show Modal Icon */}
@@ -27,13 +36,18 @@ const Navbar = ({onClickHandler, username, profileImageUrl}: NavbarProps) =>{
     {/* Grouped Right Side */}
     <div className="flex items-center">
       {/* Profile Picture */}
-      <div className="w-10 h-10 bg-gray-500 rounded-full mr-2">
+      <div onClick={toggleSettings} className='flex items-center bg-gray-900 rounded-lg p-1 hover:bg-gray-800'>
+      <div className="w-10 h-10 bg-gray-900 rounded-full mr-2">
       <img src={profileImageUrl} alt="Logo" className="rounded-full"/>;
       </div>
 
       {/* Username */}
       <span className="text-white mr-4">{username}</span>
+      </div>
 
+      {showSettings && (
+                    <DropDownSelect username={username} botConnectionState={isBotConnected}/>
+                )}
       {/* Logout Button */}
      
     { 

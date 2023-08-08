@@ -8,6 +8,7 @@ const user_session = new mongoose.Schema({
   account: Object,
   isAdmin:  { type: Boolean, default: true},
   isSetup:{ type: Boolean, default: false},
+  isBotConnected: {type: Boolean, default: false}
 });
 console.log(CONFIG.MONGO_DB.CON_STRING)
 mongoose.connect(CONFIG.MONGO_DB.CON_STRING+"/users", ()=>{console.log("connected to Mongodb")})
@@ -35,6 +36,19 @@ const getModel = (schema: Schema, collection: string) => {
   return mongoose.models[collection] || mongoose.model(collection, schema)
 }
 
+export const setConnectionState = async(username: string, isBotConnected: boolean ) =>{
+  const filter = { "login" : username }
+  const update = { "isBotConnected": isBotConnected }
+  mongoose.set('strictQuery', true)
+  const extendedSchema = extendSchema(user_session)
+  const Model = getModel(extendedSchema,"user_accounts");
+
+     let result = await Model.findOneAndUpdate(filter, update)
+
+     if(result != null){
+      console.log("Updated User : "+ username)
+     }
+}
 
 export const setSetupState = async (username: string) =>{
   const filter = { "isSetup" : false , "login" : username }
@@ -46,7 +60,7 @@ export const setSetupState = async (username: string) =>{
 
      let result = await Model.findOneAndUpdate(filter, update)
 
-     if(result == null){
+     if(result != null){
       console.log("Updated User : "+ username)
      }
   }

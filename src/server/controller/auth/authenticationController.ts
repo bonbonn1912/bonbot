@@ -30,6 +30,7 @@ authenticationRouter.get("/authenticate", authRequest,(req: Request, res: Respon
       isAdmin: true,
       isSetup: (req.user as any).isSetup,
       profileImageUrl: (req.user as any).account.profile_image_url,
+      isBotConnected: (req.user as any).isBotConnected
     }
     res.status(200).send(user);
   } 

@@ -4,10 +4,10 @@ import authRequest from "../auth/authenticationController";
 export const postUserRouter = Router();
 import { insertUser } from "../../database/postgres";
 import { authUser } from "../../types/authUser";
-import { setSetupState } from "../../database/mongo";
-import { connectToTwitchChat } from "../../twitch/chat/handler";
+import { setSetupState, setConnectionState } from "../../database/mongo";
+import chatManager from "../../twitch/chat/clientHandler";
 
-postUserRouter.post("/api/user/create",async (req: Request, res: Response) =>{
+postUserRouter.post("/api/user/create",authRequest,async (req: Request, res: Response) =>{
     console.log(req.body)
     const user: authUser = req.body as any;
     const description = user.description
@@ -17,9 +17,10 @@ postUserRouter.post("/api/user/create",async (req: Request, res: Response) =>{
     console.log(isBotConnected)
     try{
         const newUser = await insertUser(username,true,description, isAdmin, isBotConnected as boolean)
-        const mongoUser = await setSetupState(username);
+        await setSetupState(username);
+        await setConnectionState(username, isBotConnected as boolean) // Bot connection state in Mongo DB
         if(isBotConnected){
-            connectToTwitchChat(username, true)
+           chatManager.addClient(username, true)
         }
         console.log(`Inserted User ${username}`)
         res.status(200).json(JSON.stringify(newUser))
@@ -27,3 +28,4 @@ postUserRouter.post("/api/user/create",async (req: Request, res: Response) =>{
         res.status(404).send("Could not insert user")
     } 
 })
+

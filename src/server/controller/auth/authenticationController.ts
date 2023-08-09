@@ -27,7 +27,7 @@ authenticationRouter.get("/authenticate", authRequest,(req: Request, res: Respon
     const user: authUser = {
       username: (req.user as any).account.display_name,
       description: (req.user as any).account.description,
-      isAdmin: true,
+      isAdmin: (req.user as any).isAdmin,
       isSetup: (req.user as any).isSetup,
       profileImageUrl: (req.user as any).account.profile_image_url,
       isBotConnected: (req.user as any).isBotConnected

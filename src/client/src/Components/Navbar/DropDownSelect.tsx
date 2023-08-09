@@ -50,7 +50,7 @@ const DropDownSelect = ({botConnectionState, username} : DropDownSelectProps) =>
     }
 
     return (
-        <div className="bg-gray-900 rounded-lg absolute w-60 h-40 top-17 right-1">
+        <div className="bg-gray-900 rounded-lg absolute w-60 h-40 top-17 right-1 drop-shadow-2xl shadow-red-500">
             <div className="grid grid-cols-3 m-3 rounded-lg">
             <div className="pl-1 flex col-span-2 text-white w-full">
                 <div className="m-auto">

@@ -4,7 +4,12 @@ import Button from '../Buttons/Button';
 import { Sidebar } from "../Sidebar/Sidebar";
 import WelcomeModal from "./Modals/WelcomeModal";
 import { RiMenuFill } from 'react-icons/ri';
-import Navbar from "../Sidebar/Navbar";
+import Navbar from "../Navbar/Navbar";
+import Admin from "../Admin/Admin";
+import Commands from "./Command/Commands";
+import Documentation from "../Documentation/Documentation";
+import Moderation from "../Moderation/Moderation";
+
 
 export const Dashboard = () => {
   const { auth, setAuth } = useContext(AuthContext);
@@ -18,10 +23,31 @@ export const Dashboard = () => {
     setShowWelcomeModal(!showWelcomeModal);
   };
 
+  const mainPageHandler = (name: string) =>{
+    setSelectedNavItem(name)
+    console.log(name)
+  }
+
+  const [selectedNavItem, setSelectedNavItem] = useState("Commands");
+
+  const renderSelectedComponent = (component: string) => {
+    switch (component) {
+      case "Admin":
+        return <Admin/>;
+      case "Commands":
+        return <Commands />;
+      case "Documentation": 
+      return <Documentation/>
+      case "Moderation":
+        return <Moderation/>
+    }
+  };
+  
+
   return (
     <div className="flex h-screen relative">
       {/* Sidebar */}
-     <Sidebar showSidebar={showSidebar}/>
+     <Sidebar mainPageHandler={mainPageHandler} showSidebar={showSidebar}/>
 
       {/* Main Content */}
       <div className="flex flex-col flex-grow">
@@ -29,8 +55,8 @@ export const Dashboard = () => {
        <Navbar onClickHandler={toggleSidebar} isBotConnected={auth.isBotConnected} username={auth.username} profileImageUrl={auth.profileImageUrl}/>
 
         {/* Main Content Area */}
-        <div className="flex-grow bg-gray-100 p-4">
-          {/* Hier kann der Inhalt für die Hauptkomponente hinzugefügt werden */}
+        <div className="flex-grow bg-gray-100">
+        {renderSelectedComponent(selectedNavItem)}
         </div>
       </div>
 

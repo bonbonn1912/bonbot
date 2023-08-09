@@ -2,7 +2,7 @@ import { RiMenuFill } from 'react-icons/ri';
 import Button from '../Buttons/Button';
 import { LogoutButtonStyle } from '../Styles';
 import { useState } from 'react';
-import DropDownSelect from '../Navbar/DropDownSelect';
+import DropDownSelect from './DropDownSelect';
 
 interface NavbarProps {
     onClickHandler: any,

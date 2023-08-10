@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   userId       Int       @id @default(autoincrement())
-  username     String?   @unique @db.VarChar(255)
+  username     String   @unique @db.VarChar(255)
   registeredAt DateTime? @default(now()) @db.Timestamp(6)
   updatedAt    DateTime? @default(now()) @db.Timestamp(6)
   isActive     Boolean
@@ -27,8 +27,8 @@ model User {
   updatedAt   DateTime  @updatedAt
   isActive    Boolean
   count       Int
-  streamerId  Int       // Fremdschlüssel auf die User-Tabelle
-  user        User      @relation(fields: [streamerId], references: [userId])
+  streamer  String      @db.VarChar(255)
+  user        User      @relation(fields: [streamer], references: [username]) // FK auf User
   intervall Int
   isRepetitive Boolean
 }

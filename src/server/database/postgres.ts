@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { CONFIG } from '../config/config';
 import chatManager from '../twitch/chat/clientHandler';
+import { command } from '../types/command';
 const prisma = new PrismaClient({
     datasources:{
         db:{
@@ -27,24 +28,56 @@ export async function insertUser(username: string, isActive: boolean, descriptio
 }
 
 export async function connectOnToTwitchOnStartup(){
-    console.log("hier bin ich")
-    prisma.user.findMany({
-        where:{
-            isBotConnected: true,
-        },
-        select: {
-            username: true,
-        },
-    }).then((data) =>{
-        const results = data;
-        results.map(el => {
-            chatManager.addClient(el.username as string, false)
-         
-           // connectToTwitchChat(el.username as string, false)
+    return new Promise((res, rej) =>{
+        prisma.user.findMany({
+            where:{
+                isBotConnected: true,
+            },
+            select: {
+                username: true,
+            },
+        }).then((data) =>{
+            const results = data;
+            results.map(el => {
+                chatManager.addClient(el.username as string, false)  
+               // connectToTwitchChat(el.username as string, false)
+            })
+            res(results)
+        }).catch(err =>{
+            console.log(err)
+            rej(err)
         })
-      
-    }).catch(err =>{
-        console.log(err)
+    })
+   
+}
+
+export async function getAllUsers(): Promise<string[]>{
+    return new Promise((res, rej) =>{
+        prisma.user.findMany({
+            select:{
+              username: true  
+            }
+        }).then((userList) =>{
+            res(userList.map(el => el.username))
+        }).catch((err) =>{
+            console.log("Could not fetch userlist")
+            rej([])
+        })
+    })
+}
+
+export async function getCommandForUser(username: string): Promise<command[]>{
+    return new Promise((res, rej) =>{
+        prisma.commands.findMany({
+            where: {
+                streamer: username,
+            },
+        }).then((data: command[]) =>{
+            const results = data;
+            res(results)
+        }).catch(err =>{
+           rej(err)
+        })
     })
 }
 
@@ -66,21 +99,55 @@ export async function setConnectionStatePostGres(login: string, isBotConnected: 
     })
     
 }
-/*export async function insertCommand(trigger: string, value: string, intervall: number, isRepetitive: boolean, streamerId: number){
-   const command = await prisma.commands.create({
-    data:{
-       trigger: trigger,
-       value: value,
-       intervall: intervall,
-       isActive: true,
-       count: 0,
-       streamerid: streamerId,
-       isRepetitive: false 
-    }
-   }).catch(err => {
-    console.log("could not insert command. Reason: "+ err)
-    return undefined;
-   })
-   return command;
+export async function addCommandToDb(username: string, command: string, value: string){
+    return new Promise((res, rej) =>{
+      prisma.commands.create({
+        data: {
+            trigger: command,
+            value: value,
+            isActive: true,
+            count: 0,
+            streamer: username,
+            intervall: 0,
+            isRepetitive: false, 
+        }
+      }).then((user) =>{
+        res(user)
+      } ).catch((err) =>{
+        rej(err)
+      })
+    })
+}
 
-} */
+export async function updateCommand(username: string, command: string, value: string){
+    return new Promise((res,rej) =>{
+     prisma.commands.updateMany({
+        where: {
+            trigger: command,
+            streamer: username
+          },
+          data: { value: value },
+     }).then((data) =>{
+        res(data)
+     }).catch((err) =>{
+        console.log(err)
+        rej(err)
+     })
+    })
+}
+
+export async function deleteCommand(username: string, command: string){
+    return new Promise((res,rej) =>{
+     prisma.commands.deleteMany({
+        where: {
+            trigger: command,
+            streamer: username
+          },
+     }).then((data) =>{
+        res(data)
+     }).catch((err) =>{
+        console.log(err)
+        rej(err)
+     })
+    })
+}

@@ -9,7 +9,7 @@ export function getTwitchClient(channels: string[], clientId: string, accessToke
             username: clientId,
             password: accessToken
         },
-        channels: channels
+        channels: [""]
     });
 
     return client;

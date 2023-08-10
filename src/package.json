@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build_and_run": "npx tsc && cd server&& node ../dist/server/index.js",
+    "generate": "set DATABASE_POSTGRES_URL=test123&& cd server&&npx prisma generate&& npx prisma db push",
     "start": "cd server&& node ../dist/server/index.js",
     "dev": "concurrently \"npx tsc --watch\" \"cd server && nodemon -q ../dist/server/index.js\"",
     "devts": "nodemon",

@@ -55,7 +55,7 @@ const WelcomeModal = ({ onClose, username, description }: WelcomeModalProps) => 
         </p>
         <div className="flex items-center mb-4 pl-5">
           <span className="mr-2">Connect Bot:</span>
-       <ToggleButton onChange={onChangeHandler}/>
+       <ToggleButton onChange={onChangeHandler} initialValue={true}/>
         </div>
        
         <div className="flex justify-end">

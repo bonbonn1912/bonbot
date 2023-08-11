@@ -3,6 +3,7 @@ import { CONFIG } from '../../config/config';
 import { getTwitchClient } from './chat';
 import { addCommandToDb, updateCommand, deleteCommand } from '../../database/postgres';
 import commandManager from './commandHandler';
+import { command } from '../../types/command';
 
 
 
@@ -10,7 +11,6 @@ class TwitchChatManager {
     private clients: { [channel: string]: tmi.Client } = {};
  
     public async addClient(username: string, isFirstConnect = false){
-        console.log("add client")
         this.clients[username] = getTwitchClient([username], CONFIG.TWITCH.CHAT.CLIENT_ID, CONFIG.TWITCH.CHAT.ACCESS_TOKEN);
         this.connectToTwitchChat(username, isFirstConnect ).then(() =>{
             console.log("Connected to " + username)
@@ -34,9 +34,9 @@ class TwitchChatManager {
             console.log("Add command to db")
             try{
                 await addCommandToDb(username, command, value)
-                commandManager.addCommand(username,command, value)
+                await commandManager.reloadCommands(username)
                 client.say(username, `Command ${command} has been added successfully :)`)
-              
+              //  commandManager.printUserCommands(username)
             }catch(e){
                 await client.say(username, "This command already exists")
                 console.log("could not insert command. Reason : " + e)
@@ -50,7 +50,7 @@ class TwitchChatManager {
         if(commandManager.doesCommandExist(username, command)){
             try{
                 await updateCommand(username, command, value)
-                commandManager.updateCommand(username,command, value)
+                commandManager.reloadCommands(username)
                 client.say(username, `Command ${command} has been updated successfully :)`)
             }catch(e){
                 await client.say(username, "This command already exists")
@@ -62,7 +62,7 @@ class TwitchChatManager {
     }
 
     private async deleteCommand(username: string, command: string, client: tmi.Client){       
-        commandManager.printUserCommands(username)
+       // commandManager.printUserCommands(username)
         if(commandManager.doesCommandExist(username, command)){
             try{
                 await deleteCommand(username, command)
@@ -83,12 +83,12 @@ class TwitchChatManager {
 
     private async checkForMethod(channel: string, message: string, tags: any, client: tmi.Client){
         const splitMessage = message.split(" ")
-        const sanitizedUsername = channel.slice(1)
+        const sanitizedChannelName = channel.slice(1)
         if(message.startsWith("!command") && splitMessage[1] == "add"){
             if(this.isAllowed(tags)){
                 const command = splitMessage[2]
                 const commandValue = splitMessage.slice(3).join(" ")
-                await this.addCommand(sanitizedUsername, command, commandValue, client)
+                await this.addCommand(sanitizedChannelName, command, commandValue, client)
             //    await client.say(channel, "Add command")
             }else{
                 client.say(channel, "Only mods are allowed to add commands")
@@ -98,8 +98,8 @@ class TwitchChatManager {
             if(this.isAllowed(tags)){
                 const command = splitMessage[2]
                 const commandValue = splitMessage.slice(3).join(" ")
-                if(commandManager.doesCommandExist(sanitizedUsername, command)){
-                    await this.updateCommand(sanitizedUsername, command, commandValue, client)
+                if(commandManager.doesCommandExist(sanitizedChannelName, command)){
+                    await this.updateCommand(sanitizedChannelName, command, commandValue, client)
                 }
               
             //    await client.say(channel, "Add command")
@@ -110,12 +110,27 @@ class TwitchChatManager {
         if(message.startsWith("!command") && splitMessage[1] == "delete"){
             if(this.isAllowed(tags)){
                 const command = splitMessage[2]
-                await this.deleteCommand(sanitizedUsername, command, client)
+                await this.deleteCommand(sanitizedChannelName, command, client)
             //    await client.say(channel, "Add command")
             }else{
                 client.say(channel, "Only mods are allowed to add commands")
             } 
         }
+        const trigger = message.split(" ")[0]
+        if(this.checkForCommand(sanitizedChannelName,trigger)){
+            const command = commandManager.getCommand(sanitizedChannelName, trigger)
+            if(!command?.isPrivileged){
+                await client.say(channel, command?.value as string)
+            }else if(command.isPrivileged && this.isAllowed(tags)){
+                await client.say(channel, command?.value as string)
+            }
+          //  await client.say(channel, command?.value as string)
+        }
+    }
+
+
+    private checkForCommand(username: string, trigger: string){
+        return commandManager.doesCommandExist(username, trigger)
     }
 
     private async connectToTwitchChat(channel: string, isFirstConnect: boolean) {

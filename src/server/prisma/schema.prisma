@@ -31,4 +31,5 @@ model User {
   user        User      @relation(fields: [streamer], references: [username]) // FK auf User
   intervall Int
   isRepetitive Boolean
+  isPrivileged Boolean 
 }

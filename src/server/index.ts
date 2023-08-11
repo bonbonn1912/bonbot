@@ -17,7 +17,7 @@ async function init(){
         commandManager.addUser(user)
         let commandList: command[] = await getCommandForUser(user)
         commandList.map(command =>{
-            commandManager.addCommand(user, command.trigger, command.value)
+            commandManager.addCommand(user, command.trigger, command)
         })
     }))
 }

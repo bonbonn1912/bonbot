@@ -15,11 +15,10 @@ const welcomeMessage: String = "Glad you are here. It looks like this is your fi
 const WelcomeModal = ({ onClose, username, description }: WelcomeModalProps) => {
   const [botConnected, setBotConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
-
   const onChangeHandler = (shouldBeConnected: any) =>{
-    setBotConnected(shouldBeConnected as boolean)
+      setBotConnected(!botConnected)
+   
   }
-
  const submitUser = async () =>{
       setIsLoading(true)
       const newUser = {

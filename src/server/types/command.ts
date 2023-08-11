@@ -9,4 +9,6 @@ export interface command {
    streamer: string,
    intervall: number,
    isRepetitive: boolean,
+   isPrivileged: boolean,
 }
+

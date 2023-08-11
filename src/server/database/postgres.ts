@@ -73,8 +73,7 @@ export async function getCommandForUser(username: string): Promise<command[]>{
                 streamer: username,
             },
         }).then((data: command[]) =>{
-            const results = data;
-            res(results)
+            res(data)
         }).catch(err =>{
            rej(err)
         })
@@ -99,6 +98,7 @@ export async function setConnectionStatePostGres(login: string, isBotConnected: 
     })
     
 }
+
 export async function addCommandToDb(username: string, command: string, value: string){
     return new Promise((res, rej) =>{
       prisma.commands.create({
@@ -110,6 +110,7 @@ export async function addCommandToDb(username: string, command: string, value: s
             streamer: username,
             intervall: 0,
             isRepetitive: false, 
+            isPrivileged: true,
         }
       }).then((user) =>{
         res(user)
